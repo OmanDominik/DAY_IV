@@ -1,0 +1,637 @@
+# Scenariusz dla prezentujących
+
+## SLAJD 4
+    `minikube start --cpus 6 --memory 12192 --addons metrics-server`
+    *Odpalić w tle `minikube ssh` `docker pull ilum/spark:3.5.6-delta`
+    `helm install ilum ilum/ilum --verison 6.4.1`
+
+## SLAJD 5
+    `nano values_upgrade.yaml`
+
+```
+ilum-core:
+  security:
+    jwt:
+      privateKey: MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCY06upe5sOFLzVo6rjX+eN2lL+c8GAaOu9RNASdXLnBvN7fDD0AYhbAianNPQvrEhEQr3k9Hs63PZ6WE5P3EZS51gJLFU0TDiiV8c7rDs730pcgneOCYnHnOR/cljPJTS/OpidrAr2S2sY1582OTODOsXBsQ9VNufNYitN2PzA6vN7ut0GF5osg8zj3d9RD3xNTcJxo0VRIV4ntyn3b6vzTBR+ZavwRG67aKBCw6u66Hq4r3PAotOUAg65/uB4Lo6ruC/q3fIfTSfRIGEUEs4J7L0HG7AMZOFPbBY/t0zAc1HN46KdxT7gajPLz8E9iHFRaNPQZg/yWXTTcP2nQpzJAgMBAAECggEAe2qs/XCZljR/DtReg8KGX5MJZP2cLZQNlEqG8fExOorthDKV4ed+82f4SR3FeN5beeygJ86b2bxpvAGmNG4ByJ+VA8tuf45ySgAzH+iF6WL4TV77J5RiVPZJvPZd6+LzBt9OMj6ml6HuOiCfLY3iIL8Mxs+zPzDY347Aw9xQuYWEYjf2MID1MMfkGoqCCAUrH8jA7AyhF+7BiLaao72DLRz7x3MrXDBkhF3Dqs0fYD2DUaLKDGMF7TwyKvGa51b38zZshos3pqM0U6jZqcqaC+C5egheXCZiuRjfTwmisc4NkNpK/MeFL/hqSMwLvP8ZlsDSNMKYagx7SrQfQ662dQKBgQDHihtVSl54sIUMRn549TeA7IQHML2YoAEVAs31R4S3MMvkX1JllFIAkGaGBWNKVvpBRpdFmwhmdO8Ff4NCPsVGRYzbXMLOPxcZe8yjBLccwu5FXjmzUq5KyGAIl/GZ39xPAnt3PvqO+iLskWpSswmvq0UO2GLIF+Ev0/1JBcSK8wKBgQDEEd/1IBm/R4IRmV6Vnm3ntMJvDUTSu4HSfoucwlYj7DM1BOq3nJrVRUHnHobjH2ekEpE+OW4Mv0CLtiq74p279HfYAGu+V6Se/sDG+zD4++jr60Hdb99PxOF+wplFmgw9TcQBkD49OcDHSF+nXwBWdgYVsPUvSa7yGZHofpQwUwKBgQC5iK+7kWfgHnnHnTBxtciDBugIa4iPBo+bAr2QiIxdbXDYCs3ph4zr21iI2y+katVMpp93aBzab3XkDdl1WjpCCd9cBJdaAI2w80ymc3bztkiolWFfXMyU2lV5CBbsdZs6l9tHWHbPRMP+ZYOQG8sw3TZcBFVtKc8HkrxbDpLegwKBgQCLoKsbtlt/k132SIFKDYP5IQnh6dIcPDnse//Sh7auaFPjKvg3/8dnn6WaAGxQrBmzhyF17ZIIc950YCs4l956blM2OL6B04pBS+xfB51Ngp/R+jxyhGvEM9Hd4pkiLt0OfyXZcy5PjaRShqDP4WCtMemNYvKIVXHHqRv2NMY1TwKBgQCzWB3ApFoaW7FI7gkL3OrdZre3ycgF7CXfTQWD9Y9OXjcLHWd47NDLqQXioMwm7fUKCxwnpwJz+AL8seORzUgu57CYgbKxQ+1UEVra/Zg/cSzq8vguD05zNrF1IWLpJH5ruCO+e4Sfd8MY1uwy37hfsDcaLNXBNNu0YKodkZttDA==
+      publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmNOrqXubDhS81aOq41/njdpS/nPBgGjrvUTQEnVy5wbze3ww9AGIWwImpzT0L6xIREK95PR7Otz2elhOT9xGUudYCSxVNEw4olfHO6w7O99KXIJ3jgmJx5zkf3JYzyU0vzqYnawK9ktrGNefNjkzgzrFwbEPVTbnzWIrTdj8wOrze7rdBheaLIPM493fUQ98TU3CcaNFUSFeJ7cp92+r80wUfmWr8ERuu2igQsOruuh6uK9zwKLTlAIOuf7geC6Oq7gv6t3yH00n0SBhFBLOCey9BxuwDGThT2wWP7dMwHNRzeOincU+4Gozy8/BPYhxUWjT0GYP8ll003D9p0KcyQIDAQAB
+    internal:
+      users:
+        - username: "admin"
+          initialPassword: "admin"
+          roles:
+            - "ADMIN"
+        - username: "opi"
+          initialPassword: "opi"
+          roles:
+            - "USER"
+
+  externalSparkSubmit:
+    enabled: true
+  communication:
+    type: grpc
+  historyServer:
+    enabled: false
+  resources:
+    limits:
+      memory: "2Gi"
+    requests:
+      memory: "1Gi"
+  grpc:
+    job:
+      host: "ilum-grpc.default"
+
+ilum-livy-proxy:
+  enabled: false
+
+ilum-jupyter:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+postgresExtensions:
+  enabled: false
+
+gitea:
+  enabled: false
+```
+
+`helm upgrade ilum ilum/ilum -f values_upgrade.yaml`
+
+## SLAJD 7
+
+### Tworzenie klastra numer I
+  name          default_team_a
+  description   development cluster for team A
+  *Tworzymy, oczekujemy na błąd o złym namespacie*
+  namespace     team-a-spark
+  memory/executors - 1
+  storage - s3: endpoint  ilum-minio.default:9000
+
+### Tworzymy klaster numer II
+  name          default_team_b
+  description   development cluster for team B
+  namespace     team-b-spark
+  Limits Pod    3 - w celach prezentacyjnych
+  storage - s3: endpoint  ilum-minio.default:9000
+
+* Odpalamy spark Pi na klastrze team A 
+  name    SparkPi_A
+  class   org.apache.spark.examples.SparkPi
+  jar     spark-examples
+
+*Pokazujemy konsole, że faktycznie stworzone zostały nowe namespacey i że nowyjob wstaje w namespace przypisanym do klasta A*
+
+* Odpalamy grupe kodową na klastrze B
+
+*Pokazujemy konsole, że trzy pody już tam stoją, co sie stanie gdy próbujemy coś nowego stworzyć?*
+
+* Odpalamy spark Pi na klastrze team B 
+  name    SparkPi_A
+  class   org.apache.spark.examples.SparkPi
+  jar     spark-examples
+
+*Nowy job wstaje w namespace przypisanym do klastra B, ale nie działa ze względu na limity - tłumaczymy sens featurea i to, że takie limity to dobra praktyka*
+
+### SLAJD 11
+
+Używamy GitLaba i ILUMa z VMki amazonowej
+
+## Deploy GitLaba
+`helm repo add gitlab http://charts.gitlab.io/`
+values_gitlab.yaml
+```
+global:
+  ingress:
+    configureCertmanager: false
+    class: "nginx"
+  hosts:
+    domain: 3.73.42.65.nip.io
+    externalIP: 3.73.42.65
+    https: false
+  rails:
+    bootsnap:
+      enabled: false
+  shell:
+    port: 32022
+installCertmanager: false
+nginx-ingress:
+  enabled: false
+prometheus:
+  install: false
+gitlab-runner:
+  install: true
+  runners:
+    privileged: true
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+  gitlab-shell:
+    minReplicas: 1
+    maxReplicas: 1
+    service:
+      type: NodePort
+      nodePort: 32022
+registry:
+  hpa:
+    minReplicas: 1
+    maxReplicas: 1
+```
+`helm -n gitlab upgrade --install gitlab gitlab/gitlab -f values_gitlab.yaml --create-namespace`
+`kubectl -n gitlab get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode ; echo`
+`edit deploymentu runnera na poprawn IP :/`
+
+## Deploy ILUMa
+Zainstaluj resourcy kps
+```
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_probes.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusagents.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_scrapeconfigs.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+kubectl apply --server-side -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_thanosrulers.yaml
+```
+`helm install ilum ilum/ilum -f values_ilum.yaml`
+values_ilum.yaml
+```
+global:
+  lineage:
+    enabled: true
+
+ilum-core:
+  cors:
+    enabled: false
+  pullPolicy: Always
+  sql:
+    enabled: true
+  hiveMetastore:
+    enabled: true
+  logging:
+    level: debug
+  security:
+    jwt:
+      privateKey: MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCY06upe5sOFLzVo6rjX+eN2lL+c8GAaOu9RNASdXLnBvN7fDD0AYhbAianNPQvrEhEQr3k9Hs63PZ6WE5P3EZS51gJLFU0TDiiV8c7rDs730pcgneOCYnHnOR/cljPJTS/OpidrAr2S2sY1582OTODOsXBsQ9VNufNYitN2PzA6vN7ut0GF5osg8zj3d9RD3xNTcJxo0VRIV4ntyn3b6vzTBR+ZavwRG67aKBCw6u66Hq4r3PAotOUAg65/uB4Lo6ruC/q3fIfTSfRIGEUEs4J7L0HG7AMZOFPbBY/t0zAc1HN46KdxT7gajPLz8E9iHFRaNPQZg/yWXTTcP2nQpzJAgMBAAECggEAe2qs/XCZljR/DtReg8KGX5MJZP2cLZQNlEqG8fExOorthDKV4ed+82f4SR3FeN5beeygJ86b2bxpvAGmNG4ByJ+VA8tuf45ySgAzH+iF6WL4TV77J5RiVPZJvPZd6+LzBt9OMj6ml6HuOiCfLY3iIL8Mxs+zPzDY347Aw9xQuYWEYjf2MID1MMfkGoqCCAUrH8jA7AyhF+7BiLaao72DLRz7x3MrXDBkhF3Dqs0fYD2DUaLKDGMF7TwyKvGa51b38zZshos3pqM0U6jZqcqaC+C5egheXCZiuRjfTwmisc4NkNpK/MeFL/hqSMwLvP8ZlsDSNMKYagx7SrQfQ662dQKBgQDHihtVSl54sIUMRn549TeA7IQHML2YoAEVAs31R4S3MMvkX1JllFIAkGaGBWNKVvpBRpdFmwhmdO8Ff4NCPsVGRYzbXMLOPxcZe8yjBLccwu5FXjmzUq5KyGAIl/GZ39xPAnt3PvqO+iLskWpSswmvq0UO2GLIF+Ev0/1JBcSK8wKBgQDEEd/1IBm/R4IRmV6Vnm3ntMJvDUTSu4HSfoucwlYj7DM1BOq3nJrVRUHnHobjH2ekEpE+OW4Mv0CLtiq74p279HfYAGu+V6Se/sDG+zD4++jr60Hdb99PxOF+wplFmgw9TcQBkD49OcDHSF+nXwBWdgYVsPUvSa7yGZHofpQwUwKBgQC5iK+7kWfgHnnHnTBxtciDBugIa4iPBo+bAr2QiIxdbXDYCs3ph4zr21iI2y+katVMpp93aBzab3XkDdl1WjpCCd9cBJdaAI2w80ymc3bztkiolWFfXMyU2lV5CBbsdZs6l9tHWHbPRMP+ZYOQG8sw3TZcBFVtKc8HkrxbDpLegwKBgQCLoKsbtlt/k132SIFKDYP5IQnh6dIcPDnse//Sh7auaFPjKvg3/8dnn6WaAGxQrBmzhyF17ZIIc950YCs4l956blM2OL6B04pBS+xfB51Ngp/R+jxyhGvEM9Hd4pkiLt0OfyXZcy5PjaRShqDP4WCtMemNYvKIVXHHqRv2NMY1TwKBgQCzWB3ApFoaW7FI7gkL3OrdZre3ycgF7CXfTQWD9Y9OXjcLHWd47NDLqQXioMwm7fUKCxwnpwJz+AL8seORzUgu57CYgbKxQ+1UEVra/Zg/cSzq8vguD05zNrF1IWLpJH5ruCO+e4Sfd8MY1uwy37hfsDcaLNXBNNu0YKodkZttDA==
+      publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmNOrqXubDhS81aOq41/njdpS/nPBgGjrvUTQEnVy5wbze3ww9AGIWwImpzT0L6xIREK95PR7Otz2elhOT9xGUudYCSxVNEw4olfHO6w7O99KXIJ3jgmJx5zkf3JYzyU0vzqYnawK9ktrGNefNjkzgzrFwbEPVTbnzWIrTdj8wOrze7rdBheaLIPM493fUQ98TU3CcaNFUSFeJ7cp92+r80wUfmWr8ERuu2igQsOruuh6uK9zwKLTlAIOuf7geC6Oq7gv6t3yH00n0SBhFBLOCey9BxuwDGThT2wWP7dMwHNRzeOincU+4Gozy8/BPYhxUWjT0GYP8ll003D9p0KcyQIDAQAB
+
+kube-prometheus-stack:
+  enabled: true
+  #grafana:  
+  #  grafana.ini:
+  #    server: 
+  #      root_url: "http://192.168.49.2:31777/external/grafana"
+
+ilum-hive-metastore:
+  enabled: true
+
+ilum-sql:
+  enabled: true
+```
+
+## FORWARDY
+`while true; do kubectl port-forward --address 0.0.0.0 svc/ilum-ui 9777:9777; echo "Restarting..."; sleep 1; done`
+`while true; do kubectl -n gitlab port-forward --address 0.0.0.0 svc/gitlab-webservice-default 80:8181; echo "Restarting..."; sleep 1; done`
+
+## Przykład na DEMO
+
+Pipeline docelowo
+  *Tworzy lub recreatuje grupe na ILUMie po mergeu do maina, pokazemy jak robie PRa i mergeuje go*
+
+Najpierw tworzymy repo na gitlabie
+
+.gitlab-ci.yml
+```
+image: alpine:3.20
+
+stages:
+  - check_group
+  - delete_group
+  - create_group
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+default:
+  before_script:
+    - apk add --no-cache curl jq
+
+check_group:
+  stage: check_group
+  script:
+    - echo "Checking if group ILUM_KURS exists..."
+    - |
+      set -e
+      RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" http://ilum-core.default:9888/api/v1/group)
+      HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS | cut -d':' -f2)
+      BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+      echo "HTTP Status: $HTTP_STATUS"
+      echo "Response Body: $BODY"
+
+      if [ "$HTTP_STATUS" -ne 200 ]; then
+        echo "Error: API request failed with status $HTTP_STATUS"
+        exit 1
+      fi
+
+      # Safe parse with jq
+      GROUP_ID=$(echo "$BODY" | jq -r '.content[] | select(.name=="ILUM_KURS") | .id')
+
+      if [ -n "$GROUP_ID" ] && [ "$GROUP_ID" != "null" ]; then
+        echo "Group ILUM_KURS found with ID: $GROUP_ID"
+        echo "GROUP_ID=$GROUP_ID" > group_id.env
+      else
+        echo "Group ILUM_KURS does not exist."
+      fi
+  artifacts:
+    paths:
+      - group_id.env
+    expire_in: 1 day
+
+delete_group:
+  stage: delete_group
+  dependencies:
+    - check_group
+  script:
+    - echo "Deleting group ILUM_KURS if it exists..."
+    - |
+      if [ -f group_id.env ]; then
+        source group_id.env
+        if [ -n "$GROUP_ID" ]; then
+          curl -s -X POST http://ilum-core.default:9888/api/v1/group/$GROUP_ID/stop
+          RESPONSE=$(curl -s -X DELETE -w "\nHTTP_STATUS:%{http_code}" http://ilum-core.default:9888/api/v1/group/$GROUP_ID)
+          HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS | cut -d':' -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+          echo "HTTP Status: $HTTP_STATUS"
+          echo "Response Body: $BODY"
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Error: Failed to delete group with ID $GROUP_ID (Status: $HTTP_STATUS)"
+            exit 1
+          fi
+          echo "Group ILUM_KURS with ID $GROUP_ID deleted."
+        else
+          echo "No group to delete."
+        fi
+      else
+        echo "No group_id.env file found, skipping deletion."
+      fi
+
+create_group:
+  stage: create_group
+  dependencies:
+    - delete_group
+  script:
+    - echo "Creating group ILUM_KURS with service.py..."
+    - |
+      RESPONSE=$(curl -s -X POST \
+           -F "name=ILUM_KURS" \
+           -F "pyFiles=@service.py" \
+           -F "clusterName=default" \
+           -F "language=PYTHON" \
+           -w "\nHTTP_STATUS:%{http_code}" \
+           http://ilum-core.default:9888/api/v1/group)
+
+      HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS | cut -d':' -f2)
+      BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+      echo "HTTP Status: $HTTP_STATUS"
+      echo "Response Body: $BODY"
+
+      if [ "$HTTP_STATUS" -ne 200 ]; then
+        echo "Error: Failed to create group ILUM_KURS (Status: $HTTP_STATUS)"
+        exit 1
+      fi
+
+      GROUP_ID=$(echo "$BODY" | jq -r '.groupId // empty')
+      if [ -n "$GROUP_ID" ]; then
+        echo "Group ILUM_KURS created successfully with ID $GROUP_ID."
+      else
+        echo "Warning: Group created but ID not returned."
+      fi
+
+```
+
+*Omawiamy po krótce kolejne etapy*
+
+*Tworzymy plik z implementacją interfejsu grupy*
+
+service.py
+```
+from ilum.api import IlumJob
+from pyspark.sql.functions import col, sum as spark_sum
+from io import StringIO
+
+class SparkInteractiveExample(IlumJob):
+    def run(self, spark, config) -> str:
+        table_name = config.get('table')
+        database_name = config.get('database')  # optional
+        report_lines = []
+
+        if not table_name:
+            raise ValueError("Config must provide a 'table' key")
+
+        # Use specified database if provided
+        if database_name:
+            spark.catalog.setCurrentDatabase(database_name)
+            report_lines.append(f"Using database: {database_name}")
+
+        # Check if table exists in catalog
+        if table_name not in [t.name for t in spark.catalog.listTables()]:
+            raise ValueError(f"Table '{table_name}' not found in catalog")
+
+        df = spark.table(table_name)
+
+        report_lines.append(f"=== Details for table: {table_name} ===")
+
+        # Total rows
+        total_rows = df.count()
+        report_lines.append(f"Total rows: {total_rows}")
+
+        # Total columns
+        total_columns = len(df.columns)
+        report_lines.append(f"Total columns: {total_columns}")
+
+        # Distinct counts per column
+        report_lines.append("Distinct values per column:")
+        for c in df.columns:
+            distinct_count = df.select(c).distinct().count()
+            report_lines.append(f"  {c}: {distinct_count}")
+
+        # Schema info
+        report_lines.append("Schema:")
+        schema_buffer = StringIO()
+        df.printSchema()  # printSchema writes to stdout, so we capture it manually
+        # Spark does not easily return schema as string; we can reconstruct:
+        for f in df.schema.fields:
+            report_lines.append(f"  {f.name}: {f.dataType}")
+
+        # Sample data
+        report_lines.append("Sample data (first 5 rows):")
+        sample_rows = df.take(5)
+        for row in sample_rows:
+            report_lines.append(str(row.asDict()))
+
+        # Null counts per column
+        report_lines.append("Null counts per column:")
+        null_counts_df = df.select([spark_sum(col(c).isNull().cast("int")).alias(c) for c in df.columns])
+        null_counts = null_counts_df.collect()[0].asDict()
+        for c, v in null_counts.items():
+            report_lines.append(f"  {c}: {v}")
+
+        return "\n".join(report_lines)
+```
+Odpalamy execute dla 
+  * service.SparkInteractiveExample
+  * 
+{
+  "database": "product_sales",
+  "table": "products"
+}
+
+Robimy małę zmianę i PRA, dodajemy na koniec pliku
+```
+        # List other tables in the current database
+        current_db = spark.catalog.currentDatabase()
+        report_lines.append(f"Tables in database '{current_db}':")
+        tables = spark.catalog.listTables(current_db)
+        other_tables = [t.name for t in tables if t.name != table_name]
+        if other_tables:
+            for tname in other_tables:
+                report_lines.append(f"  {tname}")
+        else:
+            report_lines.append("  (no other tables)")
+```
+
+Mergeujemy Pra, pokazujemy jak grupa sie podmienia i ponownie wykonujemy zapytanie
+
+## SLAJD 12
+
+# Zadanie skzoleniowe - własny piepline CI/CD z użyciem Gitlab CI/CD oraz interfejsu REST API ILUM
+  1. Zaloguj się do interfejsu uzytkownika Gitlab http://gitlab.3.73.42.65.nip.io
+  2. Logowanie:
+        * login: root
+        * password: ADOD38geuG4CfiesGcFCfp2j3HXVeQP6vpawK3P8RXkoYFMfWKbrlmQhfwaFBsWS
+  3. Tworzymy nowy projekt, ważne żeby w nazwie zamieścić coś co odróżni wasz projekt od innych, np. inicjały, cokolwiek chcecie
+  4. W konfiguracji wybieramy po kolei:
+        * blank project
+        * w polu **Project URL** wybieramy usera *root*, a w polu **Project slug** wpisujemy wybraną nazwe projektu, np. *ILUM_KURS_DO*
+        * ustawiamy **Visibility** na *Public*
+        * **ważne** - zostawiamy zaznaczone tworzenie pliku README
+        * tworzymy projekt
+  5. W projekcie będą tylko dwa pliki, dlatego możemy oszczędzić sobie clonowanie repozytorium i stworzyć je na UIu
+  6. Więc stworzymy teraz dwa pliki, plik konfiguracyjny pipelineu Gitlab CI/CD i plik z kodem joba PySparkowego
+  5. Tworzymy plik pythonowy z kodem PySparkowym, może być tam kod jaki tylko chcecie, tutaj podaje przykład
+submit.py
+```python
+import logging
+from pyspark.sql import SparkSession
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+logger.info("""
+=== Example Spark Job: Student Enrollments ===
+This Spark job demonstrates a simple educational data pipeline using Hive tables.
+It performs the following steps:
+1. Creates a 'students' table with student information.
+2. Creates a 'courses' table with available courses.
+3. Creates an 'enrollments' table linking students to courses.
+4. Joins the tables to calculate enrollment statistics and saves them into 'course_stats'.
+All intermediate results are stored in the 'university' Hive database
+to show how data can be structured for reporting.
+=============================================
+""")
+
+spark = SparkSession \
+    .builder \
+    .appName("Spark") \
+    .getOrCreate()
+
+logger.info("SparkSession initialized")
+
+spark.sql("CREATE DATABASE IF NOT EXISTS university")
+logger.info("Database 'university' ensured")
+
+# --- Create Students Table ---
+students_data = [
+    (1, "Alice", "Computer Science"),
+    (2, "Bob", "Mathematics"),
+    (3, "Charlie", "Physics"),
+    (4, "Diana", "Computer Science")
+]
+
+df_students = spark.createDataFrame(students_data, ["student_id", "name", "major"])
+spark.sql("DROP TABLE IF EXISTS university.students")
+df_students.write.format("delta").saveAsTable("university.students")
+logger.info("Created table: university.students")
+
+# --- Create Courses Table ---
+courses_data = [
+    (101, "Big Data"),
+    (102, "Linear Algebra"),
+    (103, "Quantum Mechanics")
+]
+
+df_courses = spark.createDataFrame(courses_data, ["course_id", "course_name"])
+spark.sql("DROP TABLE IF EXISTS university.courses")
+df_courses.write.format("delta").saveAsTable("university.courses")
+logger.info("Created table: university.courses")
+
+# --- Create Enrollments Table ---
+enrollments_data = [
+    (1, 101),  # Alice -> Big Data
+    (2, 102),  # Bob -> Linear Algebra
+    (3, 103),  # Charlie -> Quantum Mechanics
+    (4, 101),  # Diana -> Big Data
+    (2, 101)   # Bob -> Big Data
+]
+
+df_enrollments = spark.createDataFrame(enrollments_data, ["student_id", "course_id"])
+spark.sql("DROP TABLE IF EXISTS university.enrollments")
+df_enrollments.write.format("delta").saveAsTable("university.enrollments")
+logger.info("Created table: university.enrollments")
+
+# --- Join to calculate course enrollment counts ---
+df_course_stats = spark.sql("""
+SELECT 
+  c.course_id,
+  c.course_name,
+  COUNT(e.student_id) AS total_students
+FROM university.courses c
+LEFT JOIN university.enrollments e ON c.course_id = e.course_id
+GROUP BY c.course_id, c.course_name
+""")
+
+spark.sql("DROP TABLE IF EXISTS university.course_stats")
+df_course_stats.write.format("delta").saveAsTable("university.course_stats")
+logger.info("Inserted final data into course_stats table")
+```
+  7. Drugi plik, ważne, aby nazywał się on dokładnie tak *.gitlab-ci.yml*, skrypt ma na celu uruchomienie joba Sparkowego zdefiniowanego w pliku *submit.py* przy każdej zmergeowanej nowej zmianie do głównej gałęzi. **WAŻNE** w zapytaniu RESTowym zmieńcie nazwe joba, tak abyście mogli go zidentyfikować
+
+.gitlab-ci.yml
+```yml
+image: alpine:3.20
+
+stages:
+  - submit_job
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+default:
+  before_script:
+    - apk add --no-cache curl jq
+
+submit_job:
+  stage: submit_job
+  script:
+    - echo "Creating job ILUM_KURS with service.py..."
+    - |
+      RESPONSE=$(curl -s -X POST \
+           -F "name=ilum_kurs_submit_DO" \
+           -F "pyFiles=@submit.py" \
+           -F "clusterName=default" \
+           -F "language=PYTHON" \
+           -w "\nHTTP_STATUS:%{http_code}" \
+           http://ilum-core.default:9888/api/v1/job/submit)
+
+      HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS | cut -d':' -f2)
+      BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS/d')
+      echo "HTTP Status: $HTTP_STATUS"
+      echo "Response Body: $BODY"
+
+      if [ "$HTTP_STATUS" -ne 200 ]; then
+        echo "Error: Failed to create job ilum_kurs_submit_DO (Status: $HTTP_STATUS)"
+        exit 1
+      fi
+
+      JOB_ID=$(echo "$BODY" | jq -r '.jobId // empty')
+      if [ -n "$JOB_ID" ]; then
+        echo "Job ilum_kurs_submit_DO created successfully with ID $JOB_ID."
+      else
+        echo "Warning: Job created but ID not returned."
+      fi
+```
+8. Jak widać od razu po zpushowaniu commita uruchamia się pipeline, możemy tam się przenawigować i śledzić jego wykonanie, w razie błedu możemy poprawić i zacomiitować zmianę, od razu uruchomi to pieline ponownie
+9. Teraz możecie przejśc na interfejs ILUMa, aby zobaczyć, czy faktycznie wasz job został wykonany, szukamy joba w zakładce **Jobs**
+   * ILUM: http://ec2-3-73-42-65.eu-central-1.compute.amazonaws.com:9777/
+   * login: admin
+   * password: admin
+10. Nastepnie jeśli chcecie możecie sobie przejść przez typowy workflow, czyli stworzyć nowego brancha, wprowadzić dowolną zmianę w jobie sparkowym, np. podmienić dane, zrobić Merge Requesta i po jego zmergeowaniu śledzić wykonanie pipelineu
+
+
+## SLAJD 16
+
+Monitoring
+  ### Forward na prometheusa
+  `while true; do kubectl port-forward --address 0.0.0.0 svc/prometheus-operated 9090:9090; echo "Restarting..."; sleep 1; done`
+  PROMETHEUS: http://ec2-3-73-42-65.eu-central-1.compute.amazonaws.com:9090/
+  Przykładowe metryki do wyszukiwania `metrics_executor_rddBlocks`  `metrics_executor_activeTasks` `container_memory_max_usage_bytes`
+
+  ### GRAFANA
+    ILUM: http://ec2-3-73-42-65.eu-central-1.compute.amazonaws.com:9777/ i na grafane
+    login: admin
+    hasło: admin
+
+## SLAJD 18
+    Definiowanie alertu w Prometheusie
+    ```yml
+    groups:
+    - name: spark_alerts
+      rules:
+      - alert: SparkJobTooLong
+        expr: spark_job_duration_seconds > 600
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Job Spark trwa za długo"
+          description: "Job {{ $labels.job }} trwa dłużej niż 10 minut"
+    ```
+
+    Konfiguracja Alertmanagera
+    ```yml
+    route:
+      receiver: 'slack-notifications'
+
+    receivers:
+      - name: 'slack-notifications'
+        slack_configs:
+          - channel: '#alerts'
+            send_resolved: true
+    ```
+
+## SLAJD 20
+
+Demo ArgoCD + ILUM
+  1. Startujemy minikube
+    `minikube start --cpus 6 --memory 10192 --addons metrics-server`
+    *Odpalić w tle `minikube ssh` `docker pull ilum/spark:3.5.6-delta`
+  2. Instalujemy ArgoCD
+    `kubectl create namespace argocd`
+    `kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+  3. Forwardujemy argo
+    `while true; do kubectl port-forward svc/argocd-server -n argocd 8080:443; echo "Restarting..."; sleep 1; done`
+  4. Argo: https://localhost:8080
+    `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo` 
+    admin:password_z_komendy
+  5. Tworzymy nową aplikacje Argo
+    NEW APP:
+    * GENERAL:
+      name      ilum
+      project   default
+      sync      automatic + wszystko
+      auto-create-ns
+    * SOURCE
+      Repository    https://charts.ilum.cloud
+      Chart         ilum
+    * DESTINATION   
+      url           https://kubernetes.default.svc //pozwala na zarządzanie różnymi klastrami
+      namespace     ilum
+    * CREATE na górze 
