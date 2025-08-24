@@ -621,17 +621,57 @@ Demo ArgoCD + ILUM
   4. Argo: https://localhost:8080
     `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo` 
     admin:password_z_komendy
-  5. Tworzymy nową aplikacje Argo
-    NEW APP:
-    * GENERAL:
-      name      ilum
-      project   default
-      sync      automatic + wszystko
-      auto-create-ns
-    * SOURCE
-      Repository    https://charts.ilum.cloud
-      Chart         ilum
-    * DESTINATION   
-      url           https://kubernetes.default.svc //pozwala na zarządzanie różnymi klastrami
-      namespace     ilum
-    * CREATE na górze 
+  5. Tworzymy repozytorium na githubie i  wnim dwa pliki
+
+app-prod.yaml
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ilum-prod
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ilum-prod
+  sources:
+    # Chart from repo
+    - chart: ilum
+      repoURL: https://charts.ilum.cloud
+      targetRevision: 6.5.0
+      helm:
+        valueFiles:
+        - $values/values-prod.yaml
+    # Values from Git
+    - repoURL: https://github.com/OmanDominik/ilum_argo_test
+      targetRevision: HEAD
+      ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+```
+oraz plik z valuesami 
+values-prod.yaml
+```yaml
+ilum-jupyter:
+  enabled: false
+
+gitea:
+  enabled: false
+
+postgresql:
+  enabled: false
+
+postgresExtensions:
+  enabled: false
+```
+
+commitujemy zmiany i wdrażamy plik na klaster w nsie argocd
+`kubectl apply -f https://raw.githubusercontent.com/OmanDominik/ilum_argo_test/main/app-prod.yaml -n argocd`
+
+  6. Obserujemy zmiany na kubectlu, czekamy aż to sie zdeplouje
+  7. Robimy zmianę w valuesach, czekamy na synca i pokazujemy co się zmienia
